@@ -1,23 +1,32 @@
-MIT License
+BLACKLIGHT Proprietary Use-Only License
+Copyright (c) 2025 AWAKEN CULT VISIONS & v0id. All rights reserved.
 
-Copyright (c) 2025 AWAKEN CULT VISIONS & v0id
+Permission is granted to you (the “Licensee”) to run and use the BLACKLIGHT
+software in its compiled form, solely for your own use, on infrastructure you
+control. No other rights are granted.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+You MAY:
+  • run and use the software for your own purposes;
+  • make backup copies for disaster recovery.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+You MAY NOT:
+  • copy, publish, disclose, or distribute the software or source code to any
+    third party;
+  • modify, adapt, merge, translate, reverse engineer, or create derivative
+    works of the software;
+  • sell, rent, lease, sublicense, host for others, or otherwise commercialize
+    the software;
+  • remove or alter any copyright, trademark, or proprietary notices.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This license does not grant any rights to use the names “BLACKLIGHT”,
+“AWAKEN CULT VISIONS”, or “v0id” as trademarks or product names.
 
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND. IN NO EVENT
+WILL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
+Third-Party Notices: The software may include open-source components licensed
+under their own terms (e.g., MIT, Apache-2.0). Those licenses govern those
+components and are not restricted by this license. You must comply with them.
