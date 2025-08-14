@@ -22,6 +22,10 @@ import ErrorBoundary from "../components/ErrorBoundary.jsx";
  * - Advanced prompt engineering
  */
 
+// Web capabilities / env
+const hasWebGPU = typeof navigator !== 'undefined' && !!navigator.gpu;
+const hasOR = !!import.meta.env?.VITE_OPENROUTER_KEY;
+
 // === Brand Tokens for Brutalist UI ===
 const PALETTE = {
   sage: "#BFC1A6",
@@ -328,11 +332,14 @@ export default function BlacklightNext() {
   }, []);
 
   const canSend = useMemo(() => {
-    if (mode === "hf") return !!hfToken;
-    if (mode === "custom") return !!customUrl;
+    if (mode === "webllm") return true;                        // in-browser
+    if (mode === "hf") return !!hfToken;                       // BYO token
+    if (mode === "openrouter") return hasOR;                   // only if key present
+    if (mode === "a1111") return !!a1111Endpoint;              // local image gen
     if (mode === "ollama") return !!ollamaUrl && !!ollamaModel;
+    if (mode === "custom") return !!customUrl;
     return false;
-  }, [mode, hfToken, customUrl, ollamaUrl, ollamaModel]);
+  }, [mode, hfToken, customUrl, ollamaUrl, ollamaModel, a1111Endpoint, hasOR]);
 
   // Enhanced API calls with fallbacks
   async function callWithFallback(fullPrompt, taskType = "conversation") {
@@ -340,6 +347,9 @@ export default function BlacklightNext() {
     
     try {
       if (mode === "webllm") {
+        if (!hasWebGPU) {
+          throw new Error('WebGPU not supported in this browser. Use Chrome/Edge ≥ 113 on desktop and reload.');
+        }
         const system = { role: 'system', content: 'You are BLACKLIGHT: concise, precise.' };
         const history = messages.map(m => ({ role: m.role, content: m.content }));
         return await webllmChat({ messages: [system, ...history, { role: 'user', content: fullPrompt }], model: webllmModel });
@@ -349,9 +359,9 @@ export default function BlacklightNext() {
       if (mode === "ollama") return await callOllama(fullPrompt);
       return await callCustom(fullPrompt);
     } catch (error) {
-      console.warn(`Primary model failed, trying fallback: ${error.message}`);
-      // Implement fallback logic here
-      return `[status: amber] Primary model unavailable. Fallback response: I understand you want to ${taskType}, but I'm experiencing connectivity issues. Please try again.`;
+      console.warn('Primary model failed:', error);
+      const msg = (error && (error.message || String(error))) || 'Unknown error';
+      return `[status: amber] ${msg}`;
     }
   }
 
@@ -570,7 +580,12 @@ export default function BlacklightNext() {
             />
             {!canSend && (
               <div className="mt-2 text-[10px] uppercase" style={{ color: PALETTE.white }}>
-                Configure {mode === "hf" ? "HuggingFace token" : mode === "ollama" ? "Ollama connection" : "custom endpoint"} to enable AI operations
+                {mode==='webllm' && (!hasWebGPU ? 'WebGPU not supported here — use Chrome/Edge 113+.' : 'WEBLLM is ready.')}
+                {mode==='hf' && 'Paste your Hugging Face token in Settings.'}
+                {mode==='ollama' && 'Start Ollama locally + choose a model (e.g., llama3:8b).'}
+                {mode==='a1111' && 'Run Automatic1111 with API enabled and set its endpoint.'}
+                {mode==='openrouter' && (!hasOR ? 'Set VITE_OPENROUTER_KEY to enable OpenRouter.' : 'OpenRouter ready.')}
+                {mode==='custom' && 'Enter a valid custom endpoint URL.'}
               </div>
             )}
             <FootNote />
@@ -645,7 +660,7 @@ function SettingsDrawer({ open, onClose, state }) {
         </div>
         <Panel title="Backend">
           <div className="grid grid-cols-3 gap-2">
-            {"webllm,ollama,a1111,openrouter,hf,custom".split(',').map(m => (
+            {["webllm","ollama","a1111",...(hasOR?["openrouter"]:[]),"hf","custom"].map(m => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
@@ -809,6 +824,56 @@ function SettingsDrawer({ open, onClose, state }) {
               style={{ borderColor: PALETTE.white, color: PALETTE.white }}
             >
               Export Session
+            </button>
+          </div>
+        </Panel>
+        <Panel title="System Self-Test">
+          <div className="grid gap-2">
+            <button
+              onClick={async () => {
+                try {
+                  if (mode === 'webllm') {
+                    if (!hasWebGPU) throw new Error('WebGPU not supported');
+                    const t = await webllmChat({ messages:[{role:'user',content:'ping'}], model: webllmModel });
+                    alert('WEBLLM OK: ' + (t ? 'response received' : 'no text'));
+                    return;
+                  }
+                  if (mode === 'ollama') {
+                    const r = await fetch(`${ollamaUrl}/api/tags`);
+                    if (!r.ok) throw new Error('Ollama not reachable');
+                    const j = await r.json();
+                    alert(`Ollama OK: ${j.models?.length || 0} models`);
+                    return;
+                  }
+                  if (mode === 'a1111') {
+                    const r = await fetch(`${a1111Endpoint}/sdapi/v1/options`);
+                    alert(r.ok ? 'A1111 OK' : 'A1111 not reachable');
+                    return;
+                  }
+                  if (mode === 'hf') {
+                    if (!hfToken) throw new Error('Missing HF token');
+                    alert('HF token present.');
+                    return;
+                  }
+                  if (mode === 'openrouter') {
+                    if (!hasOR) throw new Error('Missing VITE_OPENROUTER_KEY');
+                    alert('OpenRouter key present.');
+                    return;
+                  }
+                  if (mode === 'custom') {
+                    if (!customUrl) throw new Error('Missing custom URL');
+                    const r = await fetch(customUrl, { method:'OPTIONS' }).catch(()=>null);
+                    alert(r ? 'Custom endpoint reachable (OPTIONS)' : 'Custom endpoint not reachable');
+                    return;
+                  }
+                } catch (e) {
+                  alert('Self-test failed: ' + (e?.message || e));
+                }
+              }}
+              className="px-3 py-2 border-2 text-xs uppercase"
+              style={{ borderColor: PALETTE.white, color: PALETTE.white }}
+            >
+              Test Connection
             </button>
           </div>
         </Panel>
