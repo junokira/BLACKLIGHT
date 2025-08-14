@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BLACKLIGHT</title>
+    <link rel="icon" href="/v0id-logo.svg" />
+    <style>
+      #__crash { display:none; position:fixed; inset:0; background:#fff; color:#111; padding:16px; overflow:auto; }
+      #__crash pre{ white-space:pre-wrap; word-break:break-word; font:12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace }
+    </style>
+    <script>
+      (function(){
+        const box = document.createElement('div'); box.id='__crash'; document.addEventListener('DOMContentLoaded',()=>document.body.appendChild(box));
+        function show(e, label){ try{
+          box.style.display='block';
+          box.innerHTML = '<h3>Startup error</h3><pre>'+label+': '+(e && (e.stack||e.message||e))+'</pre>';
+          console.error(label, e);
+        }catch(_){}}
+        window.addEventListener('error', e=>show(e.error||e.message,'window.onerror'));
+        window.addEventListener('unhandledrejection', e=>show(e.reason,'unhandledrejection'));
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+  </html>
