@@ -328,11 +328,14 @@ export default function BlacklightNext() {
   }, []);
 
   const canSend = useMemo(() => {
+    if (mode === "webllm") return true; // in-browser
     if (mode === "hf") return !!hfToken;
-    if (mode === "custom") return !!customUrl;
+    if (mode === "openrouter") return !!import.meta.env.VITE_OPENROUTER_KEY;
+    if (mode === "a1111") return !!a1111Endpoint;
     if (mode === "ollama") return !!ollamaUrl && !!ollamaModel;
+    if (mode === "custom") return !!customUrl;
     return false;
-  }, [mode, hfToken, customUrl, ollamaUrl, ollamaModel]);
+  }, [mode, hfToken, customUrl, ollamaUrl, ollamaModel, a1111Endpoint]);
 
   // Enhanced API calls with fallbacks
   async function callWithFallback(fullPrompt, taskType = "conversation") {
@@ -570,7 +573,12 @@ export default function BlacklightNext() {
             />
             {!canSend && (
               <div className="mt-2 text-[10px] uppercase" style={{ color: PALETTE.white }}>
-                Configure {mode === "hf" ? "HuggingFace token" : mode === "ollama" ? "Ollama connection" : "custom endpoint"} to enable AI operations
+                {mode==='webllm' && 'WebGPU required (Chrome/Edge 113+).'}
+                {mode==='hf' && 'Paste your Hugging Face token in Settings.'}
+                {mode==='ollama' && 'Start Ollama locally and choose a model (e.g., llama3:8b).'}
+                {mode==='a1111' && 'Run Automatic1111 with API enabled and set its endpoint.'}
+                {mode==='openrouter' && 'Add VITE_OPENROUTER_KEY to use this tab, or hide it.'}
+                {mode==='custom' && 'Enter a valid custom endpoint URL.'}
               </div>
             )}
             <FootNote />
