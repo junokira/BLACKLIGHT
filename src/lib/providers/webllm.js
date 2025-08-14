@@ -1,6 +1,6 @@
 // Runs models entirely in the browser using WebGPU via WebLLM.
 // Note: First load downloads model weights; requires a modern browser with WebGPU.
-import * as webllm from "https://esm.run/@mlc-ai/web-llm";
+import * as webllm from "https://esm.run/@mlc-ai/web-llm@0.2.92";
 
 let engine = null;
 let currentModel = null;
@@ -13,6 +13,7 @@ export async function initWebLLM(model = "Phi-3.5-mini-instruct-q4f16_1", onProg
     return engine;
   }
   engine = await webllm.CreateMLCEngine(model, {
+    appConfig: webllm.prebuiltAppConfig,
     initProgressCallback: (p) => onProgress?.(p),
   });
   currentModel = model;

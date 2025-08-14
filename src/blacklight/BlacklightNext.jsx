@@ -313,7 +313,7 @@ export default function BlacklightNext() {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [selectedMode, setSelectedMode] = useState("truth");
   const listRef = useRef(null);
-  const [webllmModel, setWebllmModel] = useState('Phi-3.5-mini-instruct-q4f16_1');
+  const [webllmModel, setWebllmModel] = useState('Qwen2.5-3B-Instruct-q4f16_1');
   const [a1111Endpoint, setA1111Endpoint] = useState('http://127.0.0.1:7860');
 
   // Smart task detection
@@ -660,7 +660,7 @@ function SettingsDrawer({ open, onClose, state }) {
         </div>
         <Panel title="Backend">
           <div className="grid grid-cols-3 gap-2">
-            {["webllm","ollama","a1111",...(hasOR?["openrouter"]:[]),"hf","custom"].map(m => (
+            {(import.meta.env.PROD ? ["webllm"] : ["webllm","ollama","a1111",...(hasOR?["openrouter"]:[]),"hf","custom"]).map(m => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
